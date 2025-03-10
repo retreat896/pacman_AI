@@ -144,7 +144,7 @@ class PositionSearchProblem(search.SearchProblem):
     Note: this search problem is fully specified; you should NOT change it.
     """
 
-    def __init__(self, gameState, costFn = lambda x: 1, goal=(20,1), start=None, warn=True, visualize=True):
+    def __init__(self, gameState, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
         """
         Stores the start and goal.
 
@@ -152,12 +152,18 @@ class PositionSearchProblem(search.SearchProblem):
         costFn: A function from a search state (tuple) to a non-negative number
         goal: A position in the gameState
         """
+
+        #find the goal using gamestate.getFood
+# Current code sets goal from first food found but falls back to (1,1)
+        for (x,y) in gameState.getFood().asList():
+            self.goal = (x,y)
+            print("Found a food at", self.goal)
+            break
+
         self.walls = gameState.getWalls()
         self.startState = gameState.getPacmanPosition()
         if start != None: self.startState = start
         #if astar then use set goal of self.goal = (1,20)
-        
-        self.goal = goal
         self.costFn = costFn
         self.visualize = visualize
         if warn and (gameState.getNumFood() != 1 or not gameState.hasFood(*goal)):
@@ -363,7 +369,7 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    return 0 
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -486,7 +492,7 @@ class ClosestDotSearchAgent(SearchAgent):
         
         # Using Breadth-First Search (BFS) to find the shortest path to the closest dot
         queue = util.Queue()
-        queue.push((startPosition, []))  # (current position, path taken to reach it)
+        queue.push((startPosition, []))
         visited = set()
         
         while not queue.isEmpty():
